@@ -85,7 +85,10 @@ const RestaurantForm = () => {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">{actionTitle}</h2>
           <div className="space-x-2">
-            <button className="px-4 py-2 rounded-md bg-gray-100 text-gray-700">
+            <button
+              onClick={() => navigate("/")}
+              className="px-4 py-2 rounded-md bg-gray-100 text-gray-700"
+            >
               취소
             </button>
             <button
