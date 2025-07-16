@@ -95,7 +95,7 @@ export const RestaurantProvider = ({ children }) => {
   const [restaurants, dispatch] = useReducer(reducer, {
     data: dummyData,
     walkingFilter: "ALL",
-    ratingFilter: "ALL",
+    ratingFilter: 0,
   });
 
   return (
