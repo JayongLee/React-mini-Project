@@ -3,7 +3,7 @@ import { useRestaurants } from "../../contexts/RestaurantContext.jsx";
 
 function RestaurantBody() {
   const restaurants = useRestaurants();
-  const filterResByRating = (restaurants, selectedRating) => selectedRating === 0 ? restaurants : restaurants.filter(restaurant => restaurant.rating === selectedRating)
+  const filterResByRating = (restaurants, selectedRating) => Number(selectedRating) === 0 ? restaurants : restaurants.filter(restaurant => restaurant.rating === Number(selectedRating))
   
   const filteredRestaurants = filterResByRating(restaurants.data, restaurants.ratingFilter);
 
