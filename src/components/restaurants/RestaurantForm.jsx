@@ -1,101 +1,45 @@
-import {RAITING_ICON} from "../../constants/star.js";
-import {DISTANCE} from "../../constants/distance.js";
-import {useState} from "react";
-import {useRestaurantsDispatch} from "../../contexts/RestaurantContext.jsx";
-import {useNavigate, useLocation} from "react-router-dom";
+import { RAITING_ICON } from "../../constants/star.js";
+import { DISTANCE } from "../../constants/distance.js";
+import { useState } from "react";
+import { useRestaurantsDispatch } from "../../contexts/RestaurantContext.jsx";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const RestaurantForm = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const actionTitle = location
-        ?.state
-            ?.actionTitle ?? "등록";
-    const restaurant = location
-        ?.state
-            ?.restaurant ?? {};
-    const isRegisterForm = actionTitle.startsWith("등록");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const actionTitle = location?.state?.actionTitle ?? "등록";
+  const restaurant = location?.state?.restaurant ?? {};
+  const isRegisterForm = actionTitle.startsWith("등록");
 
-    console.log("ActionTitle", actionTitle);
-    console.log("Restaurant", restaurant);
+  console.log("ActionTitle", actionTitle);
+  console.log("Restaurant", restaurant);
 
-    const [photo, setPhoto] = useState(
-        isRegisterForm
-            ? ""
-            : restaurant.photo
-    );
-    const [name, setName] = useState(
-        isRegisterForm
-            ? ""
-            : restaurant.name
-    );
-    const [walkingTime, setTime] = useState(
-        isRegisterForm
-            ? 1
-            : restaurant.walkingTime,
-    );
-    const [rating, setRating] = useState(
-        isRegisterForm
-            ? 5
-            : Number(restaurant.rating),
-    );
+  const [photo, setPhoto] = useState(isRegisterForm ? "" : restaurant.photo);
+  const [name, setName] = useState(isRegisterForm ? "" : restaurant.name);
+  const [walkingTime, setTime] = useState(
+    isRegisterForm ? 1 : restaurant.walkingTime,
+  );
+  const [rating, setRating] = useState(
+    isRegisterForm ? 5 : Number(restaurant.rating),
+  );
 
-    const [tag, setTag] = useState(
-        isRegisterForm
-            ? []
-            : Array.isArray(restaurant.tag)
-                ? restaurant.tag
-                : restaurant.tag.split(","),
-    );
+  const [tag, setTag] = useState(
+    isRegisterForm
+      ? []
+      : Array.isArray(restaurant.tag)
+        ? restaurant.tag
+        : restaurant.tag.split(","),
+  );
 
-    const dispatch = useRestaurantsDispatch();
+  const dispatch = useRestaurantsDispatch();
 
-    const restaurantActionHandler = () => {
-        const newRestaurant = {
-            photo,
-            name,
-            rating,
-            walkingTime,
-            tag
-        };
-
-        if (!isRegisterForm) {
-            newRestaurant.id = restaurant.id;
-            dispatch({
-                type: "UPDATE",
-                updateRestaurant: {
-                    id: newRestaurant.id,
-                    photo,
-                    name,
-                    rating,
-                    walkingTime,
-                    tag
-                }
-            });
-        } else {
-            dispatch({
-                type: "ADD",
-                newRestaurant: {
-                    id: self
-                        .crypto
-                        .randomUUID(),
-                    photo,
-                    name,
-                    rating,
-                    walkingTime,
-                    tag
-                }
-            });
-        }
-
-        console.log(newRestaurant);
-
-        // TODO 확인창 모달 작성
-        const isConfirmed = window.confirm(`${actionTitle} 하시겠습니까?`);
-        if (!isConfirmed) 
-            return;
-        
-        // 등록 수행 후 메인페이지로 이동
-        navigate("/");
+  const restaurantActionHandler = () => {
+    const newRestaurant = {
+      photo,
+      name,
+      rating,
+      walkingTime,
+      tag,
     };
 
     if (!isRegisterForm) {
@@ -157,107 +101,114 @@ const RestaurantForm = () => {
         </div>
 
         <div className="flex items-start mb-6">
-            <div
-                className="w-40 h-40 rounded-md bg-gray-200 flex items-center justify-center mr-6">
-                <img src={photo} className="w-30 h-30"/>
-            </div>
-            <div>
-                <label
-                    htmlFor="image-upload"
-                    className="inline-block mb-2 px-3 py-1 text-sm border border-gray-300 rounded-md cursor-pointer">
-                    변경
-                </label>
-                <input
-                    type="file"
-                    id="image-upload"
-                    className="hidden"
-                    accept="image/*"
-                    multiple="multiple"
-                    required="required"
-                    onChange={(e) => {
-                        const file = e
-                            .target
-                            .files[0];
-                        if (file) {
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                                setPhoto(reader.result);
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    }}/>
-                <p className="text-sm text-gray-500 leading-5">
-                    ✓ png, jpg, jpeg의 확장자
-                    <br/>
-                    ✓ 음식점 사진 or 음식 사진을 업로드 해주세요!
-                </p>
-            </div>
-        </div>
-
-        <div className="mb-5">
-            <label className="block font-medium mb-1">음식점</label>
+          <div className="w-40 h-40 rounded-md bg-gray-200 flex items-center justify-center mr-6">
+            <img src={photo} className="w-30 h-30" />
+          </div>
+          <div>
+            <label
+              htmlFor="image-upload"
+              className="inline-block mb-2 px-3 py-1 text-sm border border-gray-300 rounded-md cursor-pointer"
+            >
+              변경
+            </label>
             <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                type="text"
-                id="name"
-                className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-blue-500"/>
-        </div>
-
-        <div className="mb-5">
-            <label className="block font-medium mb-1">별점</label>
-            <div className="flex">
-                <select value={rating} onChange={(e) => setRating(e.target.value)} id="rating">
-                    <option value={1}>{RAITING_ICON.ONE_STAR}</option>
-                    <option value={2}>{RAITING_ICON.TWO_STAR}</option>
-                    <option value={3}>{RAITING_ICON.THREE_STAR}</option>
-                    <option value={4}>{RAITING_ICON.FOUR_STAR}</option>
-                    <option value={5}>{RAITING_ICON.FIVE_STAR}</option>
-                </select>
-            </div>
-        </div>
-
-        <div className="mb-5">
-            <label className="block font-medium mb-1">거리</label>
-            <div className="flex w-full">
-                <input
-                    type="range"
-                    min="0"
-                    max="3"
-                    step="1"
-                    list="tickmarks"
-                    className="w-full accent-blue-600"
-                    value={walkingTime}
-                    onChange={(e) => setTime(e.target.value)}/>
-                <datalist id="tickmarks">
-                    <option value="0" label="건물 내"/>
-                    <option value="1" label="걸어서 5분 거리"/>
-                    <option value="2" label="걸어서 10분 거리"/>
-                    <option value="3" label="10분 초과"/>
-                </datalist>
-            </div>
-            <div className="flex justify-between text-sm text-gray-600 mt-2">
-                <span>{DISTANCE.IN_SAIT}</span>
-                <span>{DISTANCE.IN_FIVE_MINUTES}</span>
-                <span>{DISTANCE.IN_TEN_MINUTES}</span>
-                <span>{DISTANCE.TEN_MINUTES_OVER}</span>
-            </div>
-        </div>
-
-        <div className="mb-5">
-            <label className="block font-medium mb-1">태그</label>
-            <input
-                type="text"
-                value={tag.join(", ")}
-                onChange={(e) => setTag(e.target.value.split(",").map((t) => t.trim()))}
-                className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-blue-500"/>
+              type="file"
+              id="image-upload"
+              className="hidden"
+              accept="image/*"
+              multiple
+              required
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setPhoto(reader.result);
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+            />
             <p className="text-sm text-gray-500 leading-5">
-                ✓ 쉼표(,)로 구분하여 입력해주세요!
+              ✓ png, jpg, jpeg의 확장자 <br /> ✓ 음식점 사진 or 음식 사진을
+              업로드 해주세요!
             </p>
+          </div>
         </div>
-    </div>
-</>
-    );
+
+        <div className="mb-5">
+          <label className="block font-medium mb-1">음식점</label>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            type="text"
+            id="name"
+            className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="mb-5">
+          <label className="block font-medium mb-1">별점</label>
+          <div className="flex">
+            <select
+              value={rating}
+              onChange={(e) => setRating(e.target.value)}
+              id="rating"
+            >
+              <option value={1}>{RAITING_ICON.ONE_STAR}</option>
+              <option value={2}>{RAITING_ICON.TWO_STAR}</option>
+              <option value={3}>{RAITING_ICON.THREE_STAR}</option>
+              <option value={4}>{RAITING_ICON.FOUR_STAR}</option>
+              <option value={5}>{RAITING_ICON.FIVE_STAR}</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="mb-5">
+          <label className="block font-medium mb-1">거리</label>
+          <div className="flex w-full">
+            <input
+              type="range"
+              min="0"
+              max="3"
+              step="1"
+              list="tickmarks"
+              className="w-full accent-blue-600"
+              value={walkingTime}
+              onChange={(e) => setTime(e.target.value)}
+            />
+            <datalist id="tickmarks">
+              <option value="0" label="건물 내" />
+              <option value="1" label="걸어서 5분 거리" />
+              <option value="2" label="걸어서 10분 거리" />
+              <option value="3" label="10분 초과" />
+            </datalist>
+          </div>
+          <div className="flex justify-between text-sm text-gray-600 mt-2">
+            <span>{DISTANCE.IN_SAIT}</span>
+            <span>{DISTANCE.IN_FIVE_MINUTES}</span>
+            <span>{DISTANCE.IN_TEN_MINUTES}</span>
+            <span>{DISTANCE.TEN_MINUTES_OVER}</span>
+          </div>
+        </div>
+
+        <div className="mb-5">
+          <label className="block font-medium mb-1">태그</label>
+          <input
+            type="text"
+            value={tag.join(", ")}
+            onChange={(e) =>
+              setTag(e.target.value.split(",").map((t) => t.trim()))
+            }
+            className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+          <p className="text-sm text-gray-500 leading-5">
+            ✓ 쉼표(,)로 구분하여 입력해주세요!
+          </p>
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default RestaurantForm;
