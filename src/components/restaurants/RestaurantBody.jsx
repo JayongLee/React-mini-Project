@@ -2,12 +2,17 @@ import RestaurantItem from "./RestaurantItem.jsx";
 import { useRestaurants } from "../../contexts/RestaurantContext.jsx";
 
 function RestaurantBody() {
-  const { data } = useRestaurants();
+  const restaurants = useRestaurants();
+  const filterResByRating = (restaurants, selectedRating) => Number(selectedRating) === 0 ? restaurants : restaurants.filter(restaurant => restaurant.rating === Number(selectedRating))
+  
+  const filteredRestaurants = filterResByRating(restaurants.data, restaurants.ratingFilter);
+
+  console.log(filteredRestaurants);
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.map((food) => (
+        {filteredRestaurants.map((food) => (
           <RestaurantItem key={food.id} foodInfo={food} />
         ))}
       </div>
