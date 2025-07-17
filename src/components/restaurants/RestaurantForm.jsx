@@ -98,19 +98,62 @@ const RestaurantForm = () => {
         navigate("/");
     };
 
-    return (
-        <> < div className = "max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md" > <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">{actionTitle}</h2>
-            <div className="space-x-2">
-                <button className="px-4 py-2 rounded-md bg-gray-100 text-gray-700">
-                    취소
-                </button>
-                <button
-                    onClick={restaurantActionHandler}
-                    className="px-4 py-2 rounded-md bg-blue-500 text-white">
-                    저장
-                </button>
-            </div>
+    if (!isRegisterForm) {
+      newRestaurant.id = restaurant.id;
+      dispatch({
+        type: "UPDATE",
+        updateRestaurant: {
+          id: newRestaurant.id,
+          photo,
+          name,
+          rating,
+          walkingTime,
+          tag,
+        },
+      });
+    } else {
+      dispatch({
+        type: "ADD",
+        newRestaurant: {
+          id: self.crypto.randomUUID(),
+          photo,
+          name,
+          rating,
+          walkingTime,
+          tag,
+        },
+      });
+    }
+
+    console.log(newRestaurant);
+
+    // TODO 확인창 모달 작성
+    const isConfirmed = window.confirm(`${actionTitle} 하시겠습니까?`);
+    if (!isConfirmed) return;
+
+    // 등록 수행 후 메인페이지로 이동
+    navigate("/");
+  };
+
+  return (
+    <>
+      <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">{actionTitle}</h2>
+          <div className="space-x-2">
+            <button
+              onClick={() => navigate("/")}
+              className="px-4 py-2 rounded-md bg-gray-100 text-gray-700"
+            >
+              취소
+            </button>
+            <button
+              onClick={restaurantActionHandler}
+              className="px-4 py-2 rounded-md bg-blue-500 text-white"
+            >
+              저장
+            </button>
+          </div>
         </div>
 
         <div className="flex items-start mb-6">
